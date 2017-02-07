@@ -64,16 +64,6 @@ class File{
 		list($wa,$ha)=getimagesize($fa);
 		if($wa>$w or $ha>$h)Img::thumb($fa,$fc,$w,$h,0);}
 	
-	/*static function saveimg($f,$dir,$w,$h=''){$er=1;
-		if(substr($f,0,4)!='http')return;
-		$xt=extension($f); if(!$xt)$xt='.jpg';
-		$nm='tlx'.substr(md5($f),0,10); $h=$h?$h:$w;
-		$fa='img/'.$dir.'/full/'.$nm.$xt; Dir::mkdir_r($fa);
-		$ok=@copy($f,$fa);
-		if(!$ok){$d=@file_get_contents($f); if($d)$er=File::write($fa,$d);}
-		if($ok or !$er){if(is_file($fa))self::mkthumb($nm.$xt,$dir,$w,$h);
-			return $nm.$xt;}}*/
-	
 	static function saveimg($f,$prf,$w,$h=''){$er=1;
 		if(substr($f,0,4)!='http')return;
 		$xt=extension($f); if(!$xt)$xt='.jpg';

@@ -47,7 +47,7 @@ class Desk{
 					//elseif($v[1]=='img')$ret[]=imgup('img/full/'.$v[2],$bt,$css);
 					elseif($v[1]=='img')$ret[]=telex::playthumb($v[2],'micro','',$css);
 					elseif($v[1]=='in')$ret[]=br().App::open($v[2],$v[3]);
-					elseif($v[1]=='lk')$ret[]=href('/app'.$v[2],$bt,$css,'',1);
+					elseif($v[1]=='lk')$ret[]=href('/app'.$v[2],$bt,$css,1);
 				}
 				elseif(substr($v[0],0,strlen($dir))==$dir && $depht>$current_depht){
 					//$bt=pic('folder',$sz).div($next_level);

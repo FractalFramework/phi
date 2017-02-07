@@ -50,9 +50,7 @@ $ret=Sql::read('code',self::$db,'v','where id='.$id);
 return div(Build::Code($ret),'paneb');}
 
 //build (methods)
-static function build($p){
-$app=val($p,'app'); if(!$app)return;
-$f=unit::locate($app); $rf=explode('/',$f);
+static function build($f,$app){$rf=explode('/',$f);
 $d=File::read($f);
 $ra=explode('static function ',$d);
 foreach($ra as $v){
@@ -63,14 +61,22 @@ foreach($ra as $v){
 	if($code)$rb[]=['dir'=>$rf[1],'app'=>$app,'func'=>$func,'vars'=>$vars,'code'=>$code,'txt'=>'','lang'=>ses('lng')];}
 return $rb;}
 
+static function buildlib(){
+$f='prog/lib.php';
+$r=self::build($f,'lib');
+if($r)foreach($r as $v)$rb[]=self::save($v);
+if(isset($rb))return implode(',',$rb);}
+
 //dirs
 static function reflush($p){
-$r=self::build($p);
-if($r)foreach($r as $v)$rb[]=self::save($v); //p($r);
+$app=val($p,'app'); if(!$app)return;
+$f=unit::locate($app); 
+$r=self::build($f,$app);
+if($r)foreach($r as $v)$rb[]=self::save($v);
 if(isset($rb))return implode(',',$rb);}
 
 static function batch($dir){$dr=ses('dev').'/'.$dir;
-$r=sesclass('Dir','scan',''.$dr,1); //pr($r);
+$r=sesclass('Dir','scan',''.$dr,1);
 if($r)foreach($r as $k=>$v){
 	if(is_file($dr.'/'.$v))$rb[]=self::reflush(['app'=>substr($v,0,-4)]);
 	elseif(is_dir($dr.'/'.$v)){
@@ -84,18 +90,19 @@ static function pushall($p){
 self::$maj=Sql::read('id',self::$db,'k','where lang="'.ses('lng').'"');
 $ret=self::batch('core');
 $ret.=self::batch('app');
-//pr(self::$maj);
+//$ret.=self::buildlib();
 foreach(self::$maj as $k=>$v)Sql::delete(self::$db,$k);//obsoletes
 return $ret;}
 
 //menu
 static function menu(){
 $r=Sql::read('distinct(app)',self::$db,'rv','where lang="'.ses('lng').'" order by app');
+sort($r);
 return select('app',$r,'',1);}
 
 //interface
 static function content($p){
-self::install();
+//self::install();
 $rid=randid('dcl');
 $bt=self::menu();
 //$bt.=input('app','','10',1);

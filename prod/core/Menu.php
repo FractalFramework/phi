@@ -23,9 +23,12 @@ class Menu{
 		$attr['onmouseover']='bubCloseOthers(this.parentNode);';
 		if($type=='')$ret=aj('popup,,,1|'.$call.'|headers=1',$btn,'',$attr);
 		elseif($type=='j')$ret=aj($call,$btn,'',$attr);
-		elseif($type=='in'){$prm['headers']=1; $ret=tag('div','',App::open($call,$prm));}
+		elseif($type=='in'){
+			if(strpos($call,','))list($call,$mth)=explode(',',$call);
+			if(isset($mth))$prm['appMethod']=$mth;
+			$prm['headers']=1; $ret=tag('div','',App::open($call,$prm));}
 		elseif($type=='lk'){$attr['href']=$call; $ret=tag('a',$attr,$btn);}
-		elseif($type=='lkt')$ret=href($call,$btn,'','',1);
+		elseif($type=='lkt')$ret=href($call,$btn,'',1);
 		elseif($type=='t')$ret=tag('span','',$btn);
 		else $ret='';
 		return $ret;

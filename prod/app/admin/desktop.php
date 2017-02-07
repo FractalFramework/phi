@@ -110,8 +110,8 @@ class desktop{
 	
 	//edit on place
 	static function mdfbtn($p){
-		if($p['col']=='picto')$ico=pic($p['val']).' '; else $ico='';
-		return aj($p['cbk'].'|desktop,modif|id='.$p['id'].',col='.$p['col'].',val='.jurl($p['val']).',cbk='.$p['cbk'],$ico.$p['val'],'btn');
+		if($p['col']=='picto')$btn=pic($p['val']).' '; else $btn=$p['val'];
+		return aj($p['cbk'].'|desktop,modif|id='.$p['id'].',col='.$p['col'].',val='.jurl($p['val']).',cbk='.$p['cbk'],$btn,'btn');
 	}
 	
 	static function savemdf($p){$p['val']=$p[$p['idv']];
@@ -121,10 +121,9 @@ class desktop{
 	
 	static function modif($p){
 		$idv='mdf'.$p['id'].$p['col'];
-		//$ret=input($idv,$p['val'],16);
-		$r=array('type'=>'text','id'=>$idv,'value'=>$p['val'],'size'=>16);//,'onblur'=>'closeinput(\''.$idv.'\')'
+		$js=Ajax::js(array('com'=>'div,'.$p['cbk'].',2','app'=>'desktop,savemdf','prm'=>'cbk='.$p['cbk'].',id='.$p['id'].',col='.$p['col'].',idv='.$idv,'inp'=>$idv));
+		$r=array('type'=>'text','id'=>$idv,'value'=>$p['val'],'size'=>16,'onblur'=>$js);
 		$ret=tag('input',$r,'',1);
-		$ret.=aj('div,'.$p['cbk'].',2|desktop,savemdf|cbk='.$p['cbk'].',id='.$p['id'].',col='.$p['col'].',idv='.$idv.'|'.$idv,lang('ok',1),'btn');
 		return $ret;
 	}
 	
@@ -143,7 +142,7 @@ class desktop{
 		//table
 		if(auth(4))$keys='id,dir,type,com,picto,bt,auth'; else $keys='id,dir,picto,bt,auth';
 		$kr=explode(',',$keys); $n=count($kr);
-		if($dir)$wh=' and dir="'.$p['dir'].'"'; else $wh='';
+		if($dir)$wh=' and dir like "'.$p['dir'].'%"'; else $wh='';
 		$r=Sql::read($keys,'desktop','','where uid="'.ses('uid').'" and auth<="'.ses('auth').'" '.$wh.' order by id');
 		foreach($r as $k=>$v){
 			//$ra[$k][0]=aj('popup|desktop,edit|id='.$v[0],$v[0],'btn');

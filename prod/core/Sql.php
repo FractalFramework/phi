@@ -7,7 +7,7 @@ private static $prefix='usr';
 private static $table;
 private static $dbq;
 static function table($b){return self::$prefix.'_'.$b;}
-static function connect(){require('cnfg/connect.php'); self::$dbq=$dbq;}
+static function connect(){require($_SESSION['connect']); self::$dbq=$dbq;}
 
 #read
 static function query($sql,$z=''){if($z)echo $sql;
@@ -43,9 +43,10 @@ return $ret;}
 
 //read('id','qda','rv','where id=""');
 static function read($d,$b,$p,$q='',$z=''){
-if(substr($d,-6)=='timeup')$d=substr($d,0,-6).'UNIX_TIMESTAMP('.$b.'.up) as time';
-if(substr($d,-6)=='dateup')$d=substr($d,0,-6).'DATE_FORMAT('.$b.'.up,"%d/%m/%Y") as date';
+if(substr($d,-6)=='timeup')$d=substr($d,0,-6).'unix_timestamp('.$b.'.up) as time';
+if(substr($d,-6)=='dateup')$d=substr($d,0,-6).'date_format('.$b.'.up,"%d/%m/%Y") as date';
 if($d=='all')$d=self::columns($b,2);
+if(is_array($q))$q=self::read_from_array($q);
 $sql='select '.$d.' from '.$b.' '.$q;
 $rq=self::query($sql,$z);
 if($rq){$ret=self::sqlformat($rq,$p);
@@ -74,7 +75,11 @@ static function escape($v){
 	return mysqli_real_escape_string(self::$dbq,stripslashes($v));}
 
 //array(1=>'hello',2=>hey)
-static function mysql_array($r,$o=''){
+static function read_from_array($r,$o=''){
+	foreach($r as $k=>$v)$rb[]=$k.'="'.self::escape($v).'"';
+	return 'where '.implode(' '.($o?'or':'and').' ',$rb);}
+
+static function insert_from_array($r,$o=''){
 	foreach($r as $k=>$v){
 		if(substr($v,0,8)=='PASSWORD')$rb[$k]=$v;
 		else $rb[$k]='"'.self::escape($v).'"';}
@@ -82,18 +87,18 @@ static function mysql_array($r,$o=''){
 	else return '(NULL,'.implode(',',$rb).',"'.date('Y-m-d H:i:s',time()).'")';}
 
 //array(array(1,'hello'),array(2,hey))
-static function mysql_array2($r,$o=''){
-	foreach($r as $k=>$v)$rb[]=self::mysql_array($v,$o);
+static function insert_from_array2($r,$o=''){
+	foreach($r as $k=>$v)$rb[]=self::insert_from_array($v,$o);
 	return implode(',',$rb);}
 
 static function insert2($b,$r,$o='',$z=''){
 	if($o){self::backup($b); self::trunc($b);}
-	$sql='insert into '.$b.' values '.self::mysql_array2($r,$o);
+	$sql='insert into '.$b.' values '.self::insert_from_array2($r,$o);
 	$rq=self::query($sql,$z); return mysqli_insert_id(self::$dbq);}
 
 #update
 static function insert($b,$r,$z=''){
-	$sql='insert into '.$b.' values '.self::mysql_array($r);
+	$sql='insert into '.$b.' values '.self::insert_from_array($r);
 	$rq=self::query($sql,$z); return mysqli_insert_id(self::$dbq);}
 static function select($s,$b,$w=''){
 	self::query('select '.$s.' from '.$b.' '.$w);}

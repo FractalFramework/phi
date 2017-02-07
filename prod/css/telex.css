@@ -11,7 +11,7 @@ hr{border:1px solid #e1e8ed;}
 .navigation{position:relative; width:890px; margin:0px auto;}
 .navigation .bub span{margin:2px 0;}
 .hfixer{margin:40px 0 0 0;}
-.bigprofile{margin:30px 0 0 0; width:100%;}
+.bigprofile{margin:29px 0 0 0; width:100%;}
 .hdash{margin-top:-150px;}
 .htime{margin-top:00px;}
 /*dashboard*/
@@ -46,6 +46,8 @@ a .nbntf{color:white;}
 .actions a:hover .pic.del{color:red; background:white;}
 .liknb{color:black; margin-left:-4px; font-size:12px; font-family:Arial;}
 .board,.article,.desktop{font-size:1em; color:#292f33; padding:15px; border:1px solid #e1e8ed; border-radius:5px; background-color:#fff; margin-bottom:10px;}
+.board{font-size:14px;}
+.artim{float:left; margin:10px;}
 /*.dashboard .board{max-height:840px; overflow-x:auto;}*/
 /*timeline*/
 .timeline{float:right; width:600px;}
@@ -71,7 +73,7 @@ a .nbntf{color:white;}
 .message input[type=range]{width:90%;}
 .message .panec{max-width:510px; overflow-x:auto;}
 .label{font-family:Ubuntu-Regular; margin:-10px; background-image:linear-gradient(to right,rgba(0,0,0,0),#0079cc);}
-.label .tx{font-size:14px; text-shadow: 2px 1px 2px #606060; letter-spacing:2px;}
+.label .tx{font-size:14px; text-shadow: 2px 1px 2px #606060;}
 .label .pic{font-size:2em; font-weight:normal; margin:0px; padding:5px; color:#e5e5e5;}
 /*objects*/
 .objects{margin:4px 0; overflow-wrap:break-word;}
@@ -91,23 +93,23 @@ img.left{margin-right:10px;}
 .profile{background-color:white; color:#424242; border-radius:5px; margin:0; min-width:280px;}
 .profileb{border:1px solid #e1e8ed; border-radius:6px;  box-shadow:0 0 13px rgba(0,0,0,0.1);}
 .cols .profile{min-width:290px; margin-bottom:10px;}
-.banner{margin:0px 0 0 0; height:90px; border-radius:4px 4px 0 0; background-image:linear-gradient(#7ba8fd,#97c2ff); background-size:100% auto; background-position:0 50%; background-size:cover;}
+.banner{margin:0px 0 0 0; height:90px; border-radius:4px 4px 0 0; background-image:linear-gradient(#7ba8fd,#97c2ff); background-size:100% auto; background-position:0 50%; background-size:cover; box-shadow:0px -10px 30px -20px #000 inset;}
 .avatar,.avatarsmall,.avatarbig{background-color:#7ba8fd; display:inline-block; width:90px; height:90px; border:2px solid #fff; border-radius:6px; background-size:100% auto; background-position:center; background-size:cover;}
 .avatar{float:left; margin:-34px 10px 10px 10px;}
 .avatarsmall{width:60px; height:60px; margin:0px 10px 0 0;}
 .cicon .avatarsmall{margin:0px 10px;}
-.avatarbig{width:220px; height:220px; margin:-40px 10px 10px 20px; border-width:6px; border-radius:10px;}
+.avatarbig{width:280px; height:220px; margin:-40px 10px 10px 0px; border-width:6px; border-radius:10px; box-shadow:0px -10px 30px -20px #000;}
 .banr{}
 /*.username{clear:both;}*/
-.profile .username{margin:0 10px;}
-.usrnam{text-shadow:0px 1px 1px #fff; font-size:22px; margin:4px 0 2px;}
+.profile .username{margin:0px 10px;}
+.usrnam{text-shadow:0px 1px 1px #fff; font-size:22px; margin:2px 0 2px;}
 .usrnam a{text-decoration:underline; color:black;}
 .usrnam .grey{font-size:14px;}
-.status{clear:both; color:#444; margin:10px; padding:0 0px;}
+.status{clear:both; color:#444; margin:10px; padding:0 0 4px;}
 .statustxt,.statusdiv{margin:4px 0; font-size:14px;}
 .cols .statustxt{height:110px; overflow-x:visible; overflow-y:auto;}
 .subscrban{clear:both; padding:7px; margin-bottom:10px; background:white;}
-.subscrstats{text-align:center; margin-left:0px;}
+.subscrstats{text-align:center; float:right; min-width:300px;}
 .subscrbt{display:table-cell; padding:0 8px;}
 .subscrxt{font-variant:small-caps; font-size:12px; color:#9d9d9d;}
 .followbt{float:right; margin:10px;}

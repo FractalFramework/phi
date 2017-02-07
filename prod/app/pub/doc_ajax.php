@@ -1,7 +1,7 @@
 <?php
 
 class doc_ajax{
-	static $private='2';
+	static $private='0';
 
 	static function headers(){
 		Head::add('csscode','.console{
@@ -23,13 +23,8 @@ class doc_ajax{
 			'app'=>'utils,result',
 			'prm'=>'msg=text in input,verbose=1',
 			'inp'=>'inp1,checkbox,textarea,select');
-		$ret.=Ajax::call($params,'Send','btn');
+		$ret.=Ajax::call($params,'Send','btsav');
 		$ret.=tag('div',array('id'=>'callback2'),'');
-		$params=array(
-			'com'=>'bubble,bb3',
-			'app'=>'File,fdate',
-			'prm'=>'fileRoot=app/pub/doc_ajax.php');
-		$ret.=Ajax::call($params,'Test: Ajax::call(bubble)','btn');
 		return $ret;
 	}
 	
@@ -43,7 +38,7 @@ class doc_ajax{
 		$params=array(
 			'com'=>'div,callback1',
 			'app'=>'File,fdate',
-			'prm'=>'fileRoot=app/pub/doc_ajax.php');
+			'prm'=>'fileRoot=prog/app/pub/doc_ajax.php');
 		$ret.=Ajax::call($params,'Test: Ajax::call()','btn');
 		$ret.=tag('div',array('id'=>'callback1'),'');
 		//code
@@ -55,7 +50,7 @@ $params=array(
 	//app: 2 parameters : appName,appMethod
 	\'app\'=>\'File,fdate\',
 	//prm: any parameters to send to the App
-	\'prm\'=>\'fileRoot=app/pub/doc_ajax.php\',
+	\'prm\'=>\'fileRoot=prog/app/pub/doc_ajax.php\',
 	//inp: any parameters to capture before to send to the App
 	\'inp\'=>\'\');
 //build the button and specify the css
@@ -64,72 +59,41 @@ $ret=Ajax::call($params,\'test Ajax::call()\',\'btn\');
 $ret.=tag(\'div\',array(\'id\'=>\'callback1\'),\'\');'));
 		$ret.=br();
 		
-		#popup
-		$ret.=tag('h3','','Ajax::call(popup)');
-		//test
-		$params=array(
-			'com'=>'popup','app'=>'File,fdate',
-			'prm'=>'fileRoot=app/pub/doc_ajax.php');
-		$ret.=Ajax::call($params,'Test: Ajax::call(popup)','btn');
-		//code
-		$ret.=tag('div','class=console',Build::Code('
-$params=array(
-	\'com\'=>\'popup\',
-	\'app\'=>\'File,fdate\',
-	\'prm\'=>\'fileRoot=app/pub/doc_ajax.php\');
-$ret.=Ajax::call($params,\'Ajax::call(popup)\',\'btn\');'));
-		$ret.=br();
-		
-		#popup
-		$ret.=tag('h3','','Ajax::call(popup) using array for prm');
-		//test
-		$params=array(
-			'com'=>'popup','app'=>'utils,result',
-			'prm'=>array('msg'=>'display , and =','inp1'=>'msg:'));
-		$ret.=Ajax::call($params,'Test: Ajax::call(popup)','btn');
-		//code
-		$ret.=tag('div','class=console',Build::Code('
-$params=array(
-	\'com\'=>\'popup\',
-	\'app\'=>\'utils,result\',
-	\'prm\'=>array(\'msg\'=>\'display , and =\',\'inp1\'=>\'msg:\'));
-$ret.=Ajax::call($params,\'Ajax::call(popup)\',\'btn\');'));
-		$ret.=br();
-		
-		#pagup
-		$ret.=tag('h3','','Ajax::call(pagup)');
-		//test
-		$params=array('com'=>'pagup','app'=>'utils,resistance');
-		$ret.=Ajax::call($params,'Test: Ajax::call(pagup)','btn');
-		//code
-		$ret.=tag('div','class=console',Build::Code('
-$params=array(\'com\'=>\'pagup\',\'app\'=>\'utils,resistance\');
-$ret.=Ajax::call($params,\'Ajax::call(pagup)\',\'btn\');'));
-		$ret.=br();
-		
-		#bubble
-		$ret.=tag('h3','','Ajax::call(bubble)');
-		//test
-		$params=array(
-			'com'=>'bubble,bbl','app'=>'File,fdate',
-			'prm'=>'fileRoot=app/pub/doc_ajax.php');
-		$ret.=Ajax::call($params,'Test: Ajax::call(bubble)','btn');
-		//code
-		$ret.=tag('div','class=console',Build::Code('
-$params=array(
-	\'com\'=>\'bubble,bb1\',\'app\'=>\'File,fdate\',
-	\'prm\'=>\'fileRoot=app/pub/doc_ajax.php\');
-$ret.=Ajax::call($params,\'Ajax::call(bubble)\',\'btn\');'));
-		$ret.=br();
-		
 		#aj()
-		$ret.=tag('h3','','Ajax::j()');
+		$ret.=tag('h3','','aj()');
 		//test
-		$ret.=aj('popup|File,fdate|fileRoot=app/pub/doc_ajax.php','Test: Ajax::j()','btn');
+		$ret.=aj('popup|File,fdate|fileRoot=prog/app/pub/doc_ajax.php','Test: aj()','btn');
 		//code
 		$ret.=tag('div','class=console',Build::Code('
 //popup,option,injectJs|app,method|key1=p1,key2=p2|inp1,checkbox
-$ret.=Ajax::j(\'div,popup|File,fdate|fileRoot=app/pub/doc_ajax.php\',\'Ajax::j()\',\'btn\');'));
+$ret.=aj(\'popup|File,fdate|fileRoot=prog/app/pub/doc_ajax.php\',\'aj()\',\'btn\');'));
+		$ret.=br();
+		
+		#popup()
+		$ret.=tag('h3','','popup()');
+		//test
+		$ret.=popup('File,fdate|fileRoot=prog/app/pub/doc_ajax.php','Test: popup()','btn');
+		//code
+		$ret.=tag('div','class=console',Build::Code('
+$ret.=popup(\'File,fdate|fileRoot=prog/app/pub/doc_ajax.php\',\'popup()\',\'btn\');'));
+		$ret.=br();
+		
+		#bubble()
+		$ret.=tag('h3','','bubble()');
+		//test
+		$ret.=bubble('File,fdate|fileRoot=prog/app/pub/doc_ajax.php','Test: bubble()','btn');
+		//code
+		$ret.=tag('div','class=console',Build::Code('
+$ret.=bubble(\'File,fdate|fileRoot=prog/app/pub/doc_ajax.php\',\'bubble()\',\'btn\');'));
+		$ret.=br();
+		
+		#pagup()
+		$ret.=tag('h3','','pagup()');
+		//test
+		$ret.=pagup('File,fdate|utils,resistance','Test: pagup()','btn');
+		//code
+		$ret.=tag('div','class=console',Build::Code('
+$ret.=pagup(\'File,fdate|utils,resistance\',\'pagup()\',\'btn\');'));
 		$ret.=br();
 		
 		#ajax form
@@ -155,7 +119,7 @@ $params=array(
 	\'app\'=>\'utils,result\',
 	\'prm\'=>\'msg=text in input,verbose=1\',//verbose
 	\'inp\'=>\'inp1,checkbox,textarea,select\');
-$ret.=Ajax::call($params,\'Send\',\'btn\');
+$ret.=Ajax::call($params,\'Send\',\'btsav\');
 $ret.=tag(\'div\',array(\'id\'=>\'callback2\'),\'\');'));
 		$ret.=br();
 	

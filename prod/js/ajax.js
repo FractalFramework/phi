@@ -32,6 +32,7 @@ if(this.mRequest.readyState==4){wait=0;
 	if(this.mRequest.status=="200"){
 		var result=this.mRequest.responseText;
 		if(method!='returnVar' && target)var content=getbyid(target);
+		if(option=='x' || option=='xy')Close('popup');
 		if(target=='socket')content='';
 		else if(method=='div')content.innerHTML=result;
 		else if(method=='popup')popUp(result);
@@ -47,12 +48,11 @@ if(this.mRequest.readyState==4){wait=0;
 		else if(method=='injectJs')addjs(result);
 		else if(method=='returnVar')window[target]=result;
 		else if(method=='loadjs')setTimeout(target(result),100);
-		else if(method=='reload'){
+		else if(method=='reload'){//loged_ok
 			if(result==option)setTimeout('window.location=document.URL',100);
 			else content.innerHTML=result;}
 		else if(method=='mem')amt_ending();
 		if(option=='xy' || option=='y')Repos();
-		if(option=='x' || option=='xy')Close('popup');
 		if(option=='xx')setTimeout("Close('popup')",4000);
 		//if(this.ajaxOption=='select')selectindiv(target);
 	}

@@ -175,15 +175,9 @@ function strcount1(id,limit){
 	else getbyid('edtbt').className='btsav';
 	to.innerHTML=limit-ob.length;}
 
-/*function strcount2(id,limit){
-	var ob=getbyid(id).innerHTML; var to=getbyid('strcount');
-	if(ob.length>limit)getbyid('edtbt').className='btsav btsavno';
-	else getbyid('edtbt').className='btsav';
-	if(to && ob.length)to.innerHTML=(limit-ob.length);}*/
-
 function resizearea(id){var ob=getbyid(id);
 	var h=ob.offsetHeight; var t=ob.value; var r=t.split("\n"); var n=r.length;
-	ob.style.height=(n*20)+'px';}
+	ob.style.height=(n*16)+'px';}
 	
 function closeditor(){
 if(exb.indexOf(pid)==-1)exb.push(pid); var n=exb.length;

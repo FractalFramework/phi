@@ -6,13 +6,13 @@ class Form{
 		foreach($r as $k=>$v){
 			$ret[$k]['label']=div(label($k,$v['label']),'fcell');
 			switch($v['type']){
-				case('input'):$d=input($k,'',20,'','100p'); break;//$v['value']
-				case('textarea'):$d=textarea($k,'',40,10,'','100p'); break;
-				case('select'):$d=select($k,$v['opts'],'',''); break;
-				case('checkbox'):$d=checkbox($k,$v['opts']); break;
-				case('radio'):$d=radio($v['opts'],$k,''); break;
+				case('input'):$d=input($k,$v['value'],20,'','100p'); break;
+				case('textarea'):$d=textarea($k,$v['value'],40,10,'','100p'); break;
+				case('select'):$d=select($k,$v['opts'],$v['value'],''); break;
+				case('checkbox'):$d=checkbox($k,$v['opts'],$v['value']); break;
+				case('radio'):$d=radio($v['opts'],$k,$v['value']); break;
 				case('hidden'):$d=hidden($k,$v['value']); break;
-				case('bar'):$d=bar($k); break;}
+				case('bar'):$d=bar($k,$v['value']); break;}
 			$ret[$k]['inp']=div($d,'fcell');}
 	return $ret;}
 	
@@ -33,9 +33,16 @@ class Form{
 		unset($p['pagewidth']); unset($p['appName']); unset($p['appMethod']);
 		$table=val($p,'table'); unset($p['table']);
 		$id=val($p,'id'); if($id)unset($p['id']);
-		if($id)$ok=Sql::updates($table,$p,$id);
-		else $ok=Sql::insert($table,$p);
-		return $id?'updated':'saved:'.$ok;}
+		if($id)Sql::updates($table,$p,$id,'',1);
+		else $nid=Sql::insert($table,$p);
+		if($id)return 'updated';
+		elseif(isset($nid))return 'saved'.$nid;
+		else return 'nothing';}
+	
+	static function read($r){
+		$rb=self::build($r);
+		$tmp='[[_label*class=cell:div][_inp*class=cell:div]*class=row:div]';
+		return Vue::read_r($rb,$tmp);}
 	
 	static function com($p){$ret=''; 
 		$table=val($p,'table'); $id=val($p,'id');
@@ -44,17 +51,17 @@ class Form{
 		foreach($r as $k=>$v){
 			$val=isset($ra[$k])?$ra[$k]:'';
 			if($v=='var' or $v=='int')
-				$rb[]=['type'=>'input','id'=>$k,'value'=>$val,'size'=>'10','label'=>$k];
+				$rb[$k]=['type'=>'input','id'=>$k,'value'=>$val,'size'=>'10','label'=>$k];
 			if($v=='text')
-				$rb[]=['type'=>'textarea','id'=>$k,'value'=>$val,'cols'=>'40','rows'=>'4','label'=>$k];
-			if($v=='select')$rb[]=['name'=>$k,'opts'=>explode(',',$val)];
-			if($v=='checkbox')$rb[]=['type'=>'checkbox','name'=>$k,'ppts'=>explode(',',$val)];
-			if($v=='radio')$rb[]=['type'=>'checkbox','name'=>$k,'ppts'=>explode(',',$val)];
+				$rb[$k]=['type'=>'textarea','id'=>$k,'value'=>$val,'cols'=>'40','rows'=>'4','label'=>$k];
+			if($v=='select')$rb[$k]=['name'=>$k,'opts'=>explode(',',$val)];
+			if($v=='checkbox')$rb[$k]=['type'=>'checkbox','name'=>$k,'ppts'=>explode(',',$val)];
+			if($v=='radio')$rb[$k]=['type'=>'checkbox','name'=>$k,'ppts'=>explode(',',$val)];
 		}
-		$ret=self::build($rb).br();
+		$ret=self::read($rb);
 		$inps=implode(',',array_keys($r));
-		if($id)$ret.=aj('popup|Form,save|table='.$table.',id='.$id.'|'.$inps,langp('save'),'btn');
-		else $ret.=aj('popup|Form,save|table='.$table.'|'.$inps,langp('save'),'btn');
+		$vb=$id?',id='.$id:'';
+		$ret.=aj('popup,,x|Form,save|table='.$table.$vb.'|'.$inps,langp('save'),'btsav');
 		return $ret;
 	}
 

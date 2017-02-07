@@ -3,6 +3,7 @@
 @font-face{font-family:'philum'; src:url('/fonts/philum.eot?iefix') format('eot'),url('/fonts/philum.woff?v9.007') format('woff'),url('/fonts/philum.svg#philum') format('svg'),url('/fonts/philum.ttf') format('truetype');}
 @font-face{font-family:'DIGITALDREAM'; src:url('/fonts/DIGITALDREAM.eot?iefix') format('eot'),url('/fonts/DIGITALDREAM.woff?v8.71') format('woff'),url('/fonts/DIGITALDREAM.svg#DIGITALDREAM') format('svg');}
 @font-face{font-family:'Ubuntu-Regular'; src:url('/fonts/Ubuntu-Regular.eot?iefix') format('eot'),url('/fonts/Ubuntu-Regular.woff?v8.71') format('woff'),url('/fonts/Ubuntu-Regular.svg#Ubuntu-Regular') format('svg');}
+@font-face{font-family:'microsys'; src:url('/fonts/microsys4?iefix') format('eot'),url('/fonts/microsys4.woff?v9.007') format('woff'),url('/fonts/microsys4.svg#microsys4') format('svg'),url('/fonts/microsys4.ttf') format('truetype');}
 *,*:before,*:after{box-sizing:border-box;}
 /*elements*/
 body{font-family:Arial,Verdana,sans-serif; border:0; margin:0; padding:0; height:calc(100vh - 40px);}
@@ -25,7 +26,7 @@ button,form{margin:0;}
 form{display:inline-block;}
 code{word-wrap:break-word;}
 label{margin:4px; font-size:13px; font-family:Arial;}
-pre{font-family:inherit; white-space:pre-wrap; word-wrap:break-word;}
+pre{font-family:inherit; white-space:pre-wrap; word-wrap:break-word; margin:0;}
 table{margin:0px; border-width:0px; border-style:solid;}
 td{margin:0px; padding:2px 4px; border:0;}
 blockquote{padding:0 14px; margin:0;}
@@ -73,9 +74,10 @@ form{padding:0px; margin:0px;}
 /*list*/
 .list{color:#444; min-width:140px; text-align:left;}
 .list a{display:block; padding:4px 6px; border:none; box-shadow:none;}
-.list a:hover{color:#fff; background-color:#0088e6; color:white;}
+.list a:hover{background-color:#0088e6; color:white;}
 .list a.active{background-color:#0079cc; color:white;}
 .list a:hover.active{background-color:#0088e6;}
+.list a:hover.del{background-color:#c82020; color:white;}
 /*btn*/
 .btn,.btsav,.btdel,.btok{color:#000000; border-color:#d3d3d3; font-family:Arial,sans-serif; margin:0 1px; padding:2px 6px; border-radius:3px; border-width:0px; border-style:solid; line-height:26px; font-size:15px;}
 .btn:active{background-image:linear-gradient(#50b8fa,#aff8fa);}
@@ -90,7 +92,7 @@ form{padding:0px; margin:0px;}
 /*.btxt{margin:10px 0;}*/
 a.btxt{text-decoration:none; color:#000;}
 a.btxt:hover{text-decoration:underline; color:#0084b4;}
-.board a{font-size:14px;}
+.board{font-size:14px;}
 .btit{font-family:Ubuntu-Regular; font-size:18px; display:block; background-color:#f5f8fa; text-align:center; font-size:16px; color:#555; padding:10px;}
 a.btit{text-decoration:none;}
 a.btit:hover{text-decoration:none; background:#e1e8ed;}
@@ -101,13 +103,14 @@ a.btlk:hover{text-decoration:underline;}
 /*bootstraps*/
 .menu{padding:10px;}
 .menu:hover{background:#ffffff;}
-.tit,.txt,.txth{font-size:14px; color:#292f33; background-color:white; border:1px solid white; padding:8px 12px; margin:4px 0; width:100%;}
+.tit,.txt,.txth{font-size:1em; color:#292f33; background-color:white; border:1px solid white; padding:8px 12px; margin:4px 0; width:100%;}
 .tit:focus,.txt:focus{border:1px dotted grey;}
-.tit{min-height:40px; font-size:16px; border-color:#e1e8ed;}
+.tit{font-size:16px; font-weight:bold;}
 .txt,.txth{background:white; margin-top:5px;}
 .txth{height:360px; overflow-y:auto;}
-.stit{font-size:14px; color:#292f33; border-color:#e1e8ed; border-width:0 0 1px 0; border-style:solid; margin:10px 0; padding:10px 0;}
+.stit{font-size:14px; color:#292f33; border-color:#e1e8ed; border-width:0 0 1px 0; border-style:solid; margin:0 0 10px 0; padding:0 0 10px 0;}
 .stit .pic{font-size:18px;}
+.stxt{margin:5px 0;}
 .search input{border:1px solid white;}
 .search input:hover,.search input:focus{color:black;}
 .stabilo{background-color:rgba(255,230,0,0.8);}
@@ -119,6 +122,7 @@ a.btlk:hover{text-decoration:underline;}
 .grey a:hover{color:#000;}
 a.grey:hover{color:#000;}
 .grey .pic{color:#979797;}
+.grey:hover .pic{color:#000;}
 .date{color:#979797; font-size:small;}
 .left{float:left;}
 .right{float:right;}
@@ -220,6 +224,7 @@ margin:0 10px 0 0; padding:0;}
 .closepage{position:fixed; padding:0px; right:20px;}
 /*pictos*/
 .philum{color:#424242; font-family:'philum'; font-weight:normal; font-size:16px;}
+.microsys{color:#424242; font-family:'microsys'; font-weight:normal; font-size:32px;}
 a.active .philum{color:#bd0000;}
 .philum:hover{color:#000;}
 .pic{font-size:1em; padding:2px; margin:0 2px;}

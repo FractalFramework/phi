@@ -2,7 +2,7 @@
 
 class twitter{
 	static $private='6';
-	private static $rid;
+	private static $rid='tw';
 	
 	//js to append to the header of the parent page
 	static function injectJs(){
@@ -72,11 +72,12 @@ class twitter{
 	return pic('share').' '.$txt;}
 	
 	//write
-	static function post($prm){
-	$t=val($prm,'inp2'); 
-	$t=new Twit;
-	//if($t)$t->update($t);
-	return self::build(val($prm,'p'),val($prm,'o'));}
+	static function post($p){
+	$txt=val($p,'inp2'); 
+	$t=new Twit(val($p,'twid')); if($t)$res=$t->update($txt); //pr($res);
+	if(array_key_exists('errors',$res))$p['error']=$res['errors'][0]['message'];
+	if(isset($er))return help('error','alert');
+	else return self::build($p);}
 	
 	//datas
 	/*private static function datas($q){
@@ -103,7 +104,7 @@ class twitter{
 	static function read_batch($r){$ret='';
 	if(is_array($r))foreach($r as $q)
 		if(isset($q['id']))$ret.=self::read($q);
-	return $ret;}
+		return $ret;}
 	
 	//thread
 	private static function thread_up($t,$p){
@@ -111,63 +112,80 @@ class twitter{
 		if(isset($q['in_reply_to_status_id']))
 			$ret=self::thread_up($t,$q['in_reply_to_status_id']);
 		if(isset($q['id']))$ret.=self::read($q);
-	return $ret;}
+		return $ret;}
 	
-	static function thread($prm){$t=new Twit; $p=val($prm,'id');
-	return self::thread_up($t,$p);}
-	
-	//call from ajax
-	static function call($prm){
-		$id=val($prm,'id');//call one twit
-		$max=val($prm,'max');//continuous scrolling
-		$p=val($prm,'inp1');//change user
-		//$o=val($prm,'opt1','10');//limit
-		if($p)ses('twusr',$p);//memorize p for next calls
-		$t=new Twit;
-		if(is_numeric($id))$ret=self::read($t->read($id));
-		elseif(is_numeric($p))$ret=self::read($t->read($p));
-		else{
-			if(!$p)$p=ses('twusr');
-			$q=$t->user_timeline($p,10,$max);
-			if($max)array_shift($q);
-			$ret=self::read_batch($q);
-		}
-	return $ret;}
+	static function thread($p){
+		$t=new Twit(ses('twid'));
+		return self::thread_up($t,val($p,'id'));}
 	
 	//banner
-	static function banner($t){$show=$t->show($p); //p($show);
+	static function banner($t,$usr){$show=$t->show($usr); //p($show);
 	$img=isset($show['profile_image_url'])?img($show['profile_image_url']).' ':'';
 	$txt=isset($show['screen_name'])?href('https://twitter.com/'.$show['screen_name'],$show['name']):'';
 	return div($txt,'btn').br().br();}
 	
 	//build
-	static function build($p,$o,$res=''){
-		$p=isset($p)?$p:'philum_cms'; $o=$o?$o:10;
-		ses('twusr',$p);
-		$t=new Twit;
-		if(is_numeric($p))$ret=self::read($t->read($p));
-		else $ret=self::read_batch($t->user_timeline($p,$o));//self::banner($t).
+	static function build($p){
+		$usr=val($p,'usr','philum_cms'); $o=val($p,'o',10);
+		ses('twusr',$usr);
+		$t=new Twit(val($p,'twid'));
+		if(is_numeric($usr)){$q=$t->read($usr); $ret=self::read($q);}
+		else{$q=$t->user_timeline($usr,$o); $ret=self::read_batch($q);}//self::banner($t,$usr).
+		if(array_key_exists('errors',$q))$er=$q['errors'][0]['message']; //pr($q);
+		if(isset($er))return help('error','alert').$er;
+		return $ret;}
+	
+	//call from ajax
+	static function call($p){
+		$id=val($p,'id');//call one twit
+		$max=val($p,'max');//continuous scrolling
+		$usr=val($p,'inp1');//change user
+		//$o=val($p,'opt1','10');//limit
+		if($usr)ses('twusr',$usr);//memorize usr for next calls
+		
+		$t=new Twit(val($p,'twid'));
+		if(is_numeric($id))$ret=self::read($t->read($id));
+		elseif(is_numeric($usr))$ret=self::read($t->read($usr));
+		else{
+			if(!$usr)$usr=ses('twusr');
+			$q=$t->user_timeline($usr,10,$max); //pr($q);//
+			if(array_key_exists('errors',$q))$er=$q['errors'][0]['message'];
+			if(isset($er))return help('error','alert').$er;
+			if($max)array_shift($q);
+			$ret=self::read_batch($q);
+		}
 	return $ret;}
 	
-	//interface
-	private static function edit($p,$o){
-	$ret=input('inp2','text to twit');
-	$ret.=Ajax::j('div,'.self::$rid.',,injectJs|twitter,post|p='.$p.',o='.$o.'|inp2',pic('check'));
-	return $ret;}
+	//admin
+	private static function edit($p){
+		$usr=val($p,'usr'); $twid=val($p,'twid');
+		$ret=input('inp2','text to twit');
+		$ret.=aj(self::$rid.',,injectJs|twitter,post|usr='.$usr.',twid='.$twid.'|inp2',pico('send'));
+		return $ret;}
 	
-	private static function menu($p,$o){
-	$ret=input('inp1',$p?$p:'twitter-user');
-	//$ret.=input('opt1',$o?$o:'number of twits');
-	$ret.=Ajax::j('div,'.self::$rid.',,injectJs|twitter,call||inp1',pic('check'));
-	return $ret;}
+	private static function menu($p){
+		$usr=val($p,'usr'); $o=val($p,'o',10);
+		$ret=input('inp1',$usr?$usr:'twitter-user');
+		$ret.=aj(self::$rid.',,injectJs|twitter,call|twid='.val($p,'twid').'|inp1',pic('eye'));
+		return $ret;}
+	
+	/*static function api(){
+		$r=Sql::read('id,owner','admin_twitter','kv',['uid'=>ses('uid')]);
+		foreach($r as $k=>$v)
+			$tw[]=aj('sndtw|tlxcall,twit|id='.$id.',twid='.$k,pic('twitter',24).$v);
+		$ret=span(implode('',$tw),'','sndtw');
+		return $ret;}*/
 	
 	#content
-	static function content($prm){
-		$p=val($prm,'user','SocialGov_');
-		$o=val($prm,'nb','10');
-		$bt=self::menu($p,$o).' ';
-		if(ses('auth')>4)$bt.=self::edit($p,$o);
-		$ret=div(self::build($p,$o),'',self::$rid);
-	return $bt.br().$ret;}
+	static function content($p){$bt='';
+		$p['usr']=val($p,'user','tlexfr'); $p['o']=val($p,'nb','10');
+		$p['twid']=Sql::read('id','admin_twitter','v',['uid'=>ses('uid')]);
+		ses('twid',$p['twid']);
+		if($p['twid']){
+			$bt=self::menu($p).' ';
+			if(ses('auth')>4)$bt.=self::edit($p);}
+		if(ses('uid'))$bt.=aj('popup|admin_twitter',pico('params'));
+		$ret=div(self::build($p),'',self::$rid);
+		return $bt.br().$ret;}
 }
 ?>

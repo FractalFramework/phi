@@ -1,7 +1,6 @@
 <?php
-
 class sendmail{
-	static $private='4';
+	static $private='2';
 	
 	#content
 	static function send($p){
@@ -9,8 +8,9 @@ class sendmail{
 		$sub=val($p,'subject','');
 		$msg=val($p,'message');
 		$from=val($p,'from','bot@tlex.fr');
-		$state=Mail::send($to,$sub,$msg,$from,'text');
-		return lang($state,1);
+		$mode=val($p,'text');//html
+		$state=Mail::send($to,$sub,$msg,$from,$mode);
+		return span(lang($state,1),'valid');
 	return $ret;}
 	
 	#content

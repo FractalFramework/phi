@@ -3,7 +3,7 @@
 class download{
 
 	static function update($f){
-		$r=['prog/app','prog/core','prog/js','prog/css','prog/telex','index.php','call.php','lib.php','amt.php','api.php','cnfg/_connect.php','cnfg/_twitter_oAuth.php','.htaccess','favicon.ico','readme.txt'];
+		$r=['prog/app','prog/core','prog/js','prog/css','prog/telex','index.php','call.php','lib.php','amt.php','api.php','cnfg/site.com.php','cnfg/_twitter_oAuth.php','.htaccess','favicon.ico','readme.txt'];
 		return Tar::buildFromList($f,$r);}
 
 	#content

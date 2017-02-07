@@ -13,7 +13,7 @@ class Build{
 		$ret.=tag('a',['class'=>'imbtn','onclick'=>'Reduce(\'popup\');'],$min);
 		$ret.=tag('a',['class'=>'imbtn','onclick'=>'Repos();'],$rez);		
 		$app=val($prm,'appName'); $mth=val($prm,'appMethod');
-		$lk=href('/app/'.$app,pic('link'),'black').' ';
+		$lk=href('/app/'.$app,pic('link'),'',1).' ';
 		$title=$lk.$app;//.($mth?'::'.$mth:'');
 		$title=val($prm,'title',$title);
 		if($app && method_exists($app,'admin') && !$mth)

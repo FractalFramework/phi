@@ -22,7 +22,7 @@ class petition{
 		$nid=Sql::insert('petition_vals',[$pid,ses('uid')]);
 		return help('petition_filled','valid');}
 	
-	static function answers($p){$pid=val($p,'pid');
+	static function answers($p){$pid=val($p,'pid'); $ret='';
 		$r=Sql::read_inner('name,dateup','petition_vals','login','pvuid','rr','where pid='.$pid);
 		if($r)$ret=div(count($r).' '.lang('signatures'),'valid');
 		if($r)array_unshift($r,[lang('user'),lang('date')]);
@@ -84,7 +84,7 @@ class petition{
 	
 	//interface
 	static function content($p){
-		self::install();
+		//self::install();
 		$p['rid']=randid('fr');
 		$p['pid']=val($p,'param',val($p,'pid'));
 		$ret=hlpbt('petition');

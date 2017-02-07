@@ -73,7 +73,7 @@ class admin_icons{
 	
 	//content
 	static function content($prm){$ret='';
-		self::install();
+		//self::install();
 		$ret=self::com();
 		return div($ret,'','admm');
 	}

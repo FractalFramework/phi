@@ -5,9 +5,9 @@ class chat{
 	
 //install
 static function install(){
-	Sql::create('chat',array('cuid'=>'int','room'=>'int','txt'=>'text','vu'=>'int'),'');
-	Sql::create('chatroom',array('ruid'=>'int','private'=>'int'),'');
-	Sql::create('chatlist',array('roid'=>'int','ruid'=>'int'),'');}
+	Sql::create('chat',array('cuid'=>'int','room'=>'int','txt'=>'text','vu'=>'int'),1);
+	Sql::create('chatroom',array('ruid'=>'int','private'=>'int','old'=>'int'),1);
+	Sql::create('chatlist',array('roid'=>'int','ruid'=>'int'),0);}
 
 static function injectJs(){
 	return '';}
@@ -30,25 +30,26 @@ static function headers(){
 	.flex-container li{margin:0;}  
 	.row-reverse .chatpane{background:steelblue; color:white;}
 	.menu,.menuactive{clear:left; background:#f4f4f4; margin:0; padding:4px 7px;}
-	.menuactive{background:#ffffff;}
+	.menuactive{background:#D0D0D0;}
 	.menu:hover{background:#ffffff;}
 ');
 	Head::add('jscode',self::injectJs());}
 
 //read
-static function attime($sec){$ret=lang('there_was').' ';
-	if($sec>84600){$nj=floor($sec/84600); return $ret.$nj.' days';}
-	if($sec>3600){$hr=floor($sec/3600); return $ret.$hr.'h ';}
-	elseif($sec>60){$min=floor($sec/60); return $ret.$min.'min ';}
-	else return $ret.$sec.'s';}
+static function attime($sec){$ret=lang('there_was').' '; $sec=time()-$sec;
+	if($sec>84600*3){$n=floor($sec/84600/30); return $ret.$n.' '.plurial('month',$n,1);}
+	elseif($sec>84600){$n=floor($sec/84600); return $ret.$n.' '.plurial('day',$n,1);}
+	elseif($sec>3600){$n=floor($sec/3600); return $ret.$n.' '.plurial('hour',$n,1);}
+	elseif($sec>60){$n=floor($sec/60); return $ret.$n.' '.plurial('minute',$n,1);}
+	else return $ret.$sec.' s';}
 
 static function pane($r){$ret='';
 	if($r)foreach($r as $k=>$v){$del='';
 		$user=tag('li',['class'=>'chatprofile'],$v[0]);
 		$txt=tag('li',['class'=>'chatpane'],nl2br($v[1]));
-		$date=tag('div',['class'=>'chatdate'],self::attime($v[2]));
+		$date=tag('div',['class'=>'chatdate'],self::attime($v[3]));
 		if($v[0]==ses('user')){
-			$bt=aj('popup|chat,del|id='.$v[3],pic('bolt'));
+			$bt=aj('popup|chat,del|id='.$v[2],pic('bolt'));
 			$del=tag('li',['class'=>'chatdate'],$bt);}
 		if($v[0]==ses('user'))$css='row-reverse'; else $css='row ';
 		$ret.=div($user.$txt.$date.$del,'flex-container '.$css);}
@@ -60,7 +61,7 @@ static function clearntf($room){
 
 static function read($p){$id=val($p,'id'); $room=val($p,'room',ses('room'));
 	if(!val($p,'appName'))self::clearntf($room);
-	$cols='name,txt,now()-chat.up as now, chat.id as id';
+	$cols='name,txt,chat.id as id,timeup';
 	if($id)$where='where chat.id='.$id;//and chat.up>now()-86400 
 	else $where='where room="'.$room.'" order by chat.id asc limit 100';
 	$r=Sql::read_inner($cols,'chat','login','cuid','',$where);
@@ -84,11 +85,11 @@ static function del($p){
 		return self::read([]);}
 
 static function create($p){$r=explode('-',val($p,'users')); $prv=val($p,'private');
-	$room=Sql::insert('chatroom',[ses('uid'),$prv]);
+	$room=Sql::insert('chatroom',[ses('uid'),$prv,0]);
 	if($room){
 		foreach($r as $v){
-			$id=Sql::read('id','login','v','where name="'.$v.'"');
-			Sql::insert('telex_ntf',[$id,ses('user'),5,'','1']);
+			//Sql::insert('telex_ntf',[$v,ses('user'),5,'','1']);
+			telex::saventf1($v,ses('user'),5);
 			$ok=Sql::insert('chatlist',[$room,$v]);}
 		$bt=lang('room created').' #'.$room;
 		if($rid=val($p,'rid'))$ret=insertbt($bt,$room.':chat',$rid);
@@ -111,7 +112,7 @@ static function access($p){$room=val($p,'room');
 //telex
 static function chatinvit($p){$rid=val($p,'rid'); $ret='';
 	$id=val($p,'id'); $usr=val($p,'usr'); $op=val($p,'op');
-	if($op)sesrz('chtnvt',$usr,$op=='add'?$id:'x');
+	if($op)sesrz('chtnvt',$usr,$op=='add'?$id:'');
 	$r=ses('chtnvt');
 	if($r)foreach($r as $k=>$v){
 		$avatar=profile::com($k,1);
@@ -133,11 +134,11 @@ static function newchat($p){$rid=val($p,'rid'); $ret=''; sez('chtnvt','');
 
 //menu
 static function menu($p){$ret=''; $rid=val($p,'rid');//tlex
-	$r=Sql::read('distinct(roid) as room,DATE_FORMAT(chatlist.up,"%d/%m/%Y") as date,vu','chatlist','rr','left join chat on ruid=cuid where ruid="'.ses('uid').'" order by chatlist.up desc');
+	$r=Sql::read('distinct(roid) as room,DATE_FORMAT(chatlist.up,"%d/%m/%Y") as date,vu','chatlist','rr','left join chat on chatlist.ruid=cuid left join chatroom on chatroom.id=roid where chatlist.ruid="'.ses('uid').'" and old=0 order by chatlist.up desc');
 	foreach($r as $v){$in='';
-	$rc=Sql::read_inner('name,private','chatroom','login','ruid','rw','where chatroom.id='.$v['room'].'');
-	$rb=Sql::read_inner('name','chatlist','login','ruid','rv','where roid='.$v['room'].' and name!="'.$rc[0].'"');
-	$ntf=Sql::read('state','telex_ntf','v','where 4usr="'.ses('user').'" and typntf=5 and txid='.$v['room']);//
+		$rc=Sql::read_inner('name,private','chatroom','login','ruid','rw','where chatroom.id='.$v['room'].'');
+		$rb=Sql::read_inner('name','chatlist','login','ruid','rv','where roid='.$v['room'].' and name!="'.$rc[0].'"');
+		$ntf=Sql::read('state','telex_ntf','v','where 4usr="'.ses('user').'" and typntf=5 and txid='.$v['room']);//
 		$prv=langp($rc[1]?'private':'public').' ';
 		$nfo=span('#'.$v['room'].' '.$v['date'],'small').' ';
 		$im=profile::com($rc[0],2).' ';
@@ -146,8 +147,9 @@ static function menu($p){$ret=''; $rid=val($p,'rid');//tlex
 		//if($rid)$in=telex::publishbt($v['room'],'chat');
 		//if($rid)$pp='popup'; else $pp='chtwrp,,y';
 		$cssvu=$v['vu']||$ntf?'active':'';
-		$bt=div($im.$from.$prv.$nfo.$in,'menu'.$cssvu);
-		$ret.=aj('pagup|chat|headers=1,room='.$v['room'],$bt);
+		$del=aj('pagup|chat,com|headers=1,del='.$v['room'],langp('del'),'btdel');
+		$bt=aj('pagup|chat|headers=1,room='.$v['room'],$im.$from.$prv.$nfo.$in);
+		$ret.=div($bt.$del,'menu'.$cssvu);
 	}
 	$ret.=div(toggle('newchat|chat,newchat',langp('select users'),'btsav')).' ';
 	$ret.=div('','','newchat');
@@ -168,8 +170,9 @@ static function comtlx($p){$rid=val($p,'rid'); $bt=pic('comment').sp();
 	return $ret;}
 
 static function com($p){
-	$tit=div(lang('chat'),'btit');
-	return $tit.div(self::menu(''),'chatwrapper','chtwrp');;}
+	if($del=val($p,'del'))Sql::update('chatroom','old',1,$del);
+	//$tit=div(lang('chat'),'btit');$tit.
+	return div(self::menu(''),'chatwrapper','chtwrp');}
 
 #content
 static function content($prm){

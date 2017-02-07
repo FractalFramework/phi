@@ -62,6 +62,10 @@ class login{
 	static function verifusr($p){
 		return Sql::read('id','login','v','where name="'.$p['user'].'"');}
 	
+	static function superadmin(){
+		$ex=Sql::read('count(id)','login','v','');
+		if(!$ex)return 6; else return ses('authlevel');}
+	
 	static function registerForm($p){$ret='';
 		$user=val($p,lang('user')); $sz='28';
 		//$cntx=val($p,'cntx');
@@ -69,7 +73,8 @@ class login{
 		$ret.=password('pass',lang('password',1),$sz,1);
 		$ret.=aj('lgkg|keygen,build',pic('key')).div('','','lgkg');
 		$ret.=div(input('mail','',$sz,lang('mail',1)));
-		$ret.=hidden('auth',ses('authlevel'));
+		$auth=self::superadmin();//first user
+		$ret.=hidden('auth',$auth);
 		//$ret.=hidden('cntx',$cntx);
 		$btn=langp('register');
 		$ret.=aj('div,cbklg,reload|login,register|time='.time().'|user,pass,mail,auth',$btn,'btsav');
@@ -123,7 +128,8 @@ class login{
 			case('loged_ok'):$ret=self::loged($user).self::logoutBtn($user); break;
 			case('loged_out'):$ret=$login.self::registerBtn($user); break;
 			case('loged_private'):$ret=$login; break;
-			case('bad_password'):$ret=$login.self::recoverBtn($user); break;
+			case('bad_password'):
+				$ret=$login.self::recoverBtn($user).self::registerBtn($user); break;
 			case('unknown_user'):$ret=$login.self::registerBtn($user); break;
 			case('register_fail'):$ret=$login.self::registerBtn($user); break;
 			case('register_error'):$ret=self::registerBtn($user); break;
@@ -138,10 +144,10 @@ class login{
 		//if($state=='loged_ok')reload('/');
 		return $ret;}
 	
-	//content
+	//telex
 	static function com($p){$ret=''; $user='';
-		$auth=val($p,'auth');
 		if(val($p,'o'))self::$css='btn abbt';
+		$auth=val($p,'auth');
 		ses('authlevel',$auth?$auth:self::$authlevel);
 		$state=Auth::login('','');
 		if($state=='ip_found')$user=Auth::getUserByUid(ses('uid'));

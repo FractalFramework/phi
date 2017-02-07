@@ -24,12 +24,21 @@ class Twit{
 	private $_user;
 	private $_id;
 	
-	public function __construct(){
-		require('cnfg/twitter_oAuth.php');//oAuth logins
+	public function __construct($id=''){if(!$id)$id=2;
+		/*require('cnfg/twitter_oAuth.php');//oAuth logins
 		$this->_oauth_token = $oauth_token;
 		$this->_oauth_token_secret = $oauth_token_secret;
 		$this->_oauth_consumer_key = $oauth_consumer_key;
-		$this->_oauth_consumer_secret = $oauth_consumer_secret;
+		$this->_oauth_consumer_secret = $oauth_consumer_secret;*/
+		
+		$cols='consumer_key,consumer_secret,token_key,token_secret';
+		$r=Sql::read($cols,'admin_twitter','ra',['id'=>$id]); //pr($r);
+		if($r){
+			$this->_oauth_token=$r['token_key'];
+			$this->_oauth_token_secret=$r['token_secret'];
+			$this->_oauth_consumer_key=$r['consumer_key'];
+			$this->_oauth_consumer_secret=$r['consumer_secret'];}
+			
 		$this->_oauth_nonce=md5(rand());
 		$this->_oauth_signature_method='HMAC-SHA1';
 		$this->_oauth_timestamp=time();

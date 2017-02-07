@@ -87,7 +87,7 @@ class dev{
 		$bt.=Ajax::j('devedit|dev,save|f='.$f.'|'.ses('rid'),langp('save'),'btsav').' ';
 		$bt.=Ajax::j(ses('rid').'|dev,del|f='.$f,langp('erase'),'btdel').' ';
 		$bt.=Ajax::j('popup|'.$app,langp('load'),'btn').' ';
-		$bt.=href('/app/'.$app,langp('open'),'btn','',1).br();
+		$bt.=href('/app/'.$app,langp('open'),'btn',1).br();
 		$ret=tag('textarea',array('id'=>ses('rid'),'class'=>'txarea'),htmlentities($txt));
 		return $bt.$ret;
 	}

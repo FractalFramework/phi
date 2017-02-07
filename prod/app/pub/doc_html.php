@@ -1,7 +1,7 @@
 <?php
 
 class doc_html{
-	static $private='2';
+	static $private='0';
 
 	static function headers(){
 		Head::add('csscode','.console{

@@ -44,7 +44,7 @@ class Edit{
 		if(isset($r))foreach($r as $k=>$v){
 			$label=label($k,isset($lb[$k])?lang($lb[$k]):$k);
 			$ret.=div(goodinput($k,$v).' '.$label);}
-		$ret.=aj($rid.'Edit,'.$act.'|'.$prm.'|'.$cols,langp($act),'btsav');
+		$ret.=aj($rid.'|Edit,'.$act.'|'.$prm.'|'.$cols,langp($act),'btsav');
 	return div($ret,'',$rid);}
 
 }

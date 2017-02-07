@@ -32,7 +32,7 @@ class Auth {
 	static function register($user,$pass,$mail,$auth){$ip=ip();
 		if(!filter_var($mail,FILTER_VALIDATE_EMAIL))return 'register_fail_mail';
 		if(Sql::read('id','login','v','where name="'.$user.'"'))return 'register_fail_aex';
-		$r=array($user,'PASSWORD("'.$pass.'")',$auth,$mail,$ip);
+		$r=array($user,'PASSWORD("'.$pass.'")',$auth,$mail,$ip);//,'0'
 		$uid=Sql::insert(self::$db,$r);
 		if($uid)self::activateSession($uid,$user,$auth);
 		self::activateCookie($uid,$user);
@@ -55,6 +55,9 @@ class Auth {
 	static function getUserFromIp(){
 		return Sql::read('id,name,auth',self::$db,'ra','where ip="'.ip().'"');}
 
+	static function logUserFromIp($usr){
+		return Sql::read('id,auth',self::$db,'ra','where ip="'.ip().'" and name="'.$usr.'"');}
+
 	static function getUserByUid($uid){
 		return Sql::read('name',self::$db,'v','where id="'.$uid.'"');}
 
@@ -68,7 +71,7 @@ class Auth {
 	
 	static function login($user='',$pass=''){
 		//self::install();
-		$uid=ses('uid'); if($uid)return 'loged';
+		$uid=ses('uid'); //if($uid)return 'loged';
 		$user=normalize($user);
 		$pass=normalize($pass);
 		//$uid=cookie('uid'); if($uid)$state='cookie_found';//login with cookies
@@ -76,9 +79,11 @@ class Auth {
 		if($user){
 			$uid=self::getUidOfUser($user);
 			if($uid && $user && !$pass){//recognize
-				$ra=self::getUserFromIp();
-				if(isset($ra['name']) && $ra['name']==$user)
-					$state=self::logon($ra['id'],$ra['name'],$ra['auth']);}
+				if($ra=self::logUserFromIp($user)){
+					$state=self::logon($ra['id'],$user,$ra['auth']);}
+				else{$ra=self::getUserFromIp();
+					if(isset($ra['name']) && $ra['name']==$user)
+						$state=self::logon($ra['id'],$ra['name'],$ra['auth']);}}
 			elseif($user && $pass){
 				$sql='where name="'.$user.'" and password=PASSWORD("'.$pass.'")';
 				$rb=Sql::read('id,ip,auth',self::$db,'ra',$sql);

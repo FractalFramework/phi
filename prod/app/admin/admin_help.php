@@ -42,8 +42,9 @@ class admin_help{
 		$r=Sql::read('ref,txt,lang','help','ra','where id='.$prm['id']);
 		$ret=label($rid,$r['ref'].' ('.$r['lang'].')');
 		$ret.=aj($to.'|admin_help,update|id='.$prm['id'].',rid='.$rid.',lang='.$r['lang'].'|'.$rid,lang('save'),'btsav');
-		$ret.=aj($to.'|admin_help,del|id='.$prm['id'].',lang='.$r['lang'],lang('del'),'btdel').br();
-		//$ret.=aj('popup|admin_help,edit|lang=en,to=hlpxd,rid='.$rid.',id='.$prm['id'],'en','btn');
+		$ret.=aj($to.'|admin_help,del|id='.$prm['id'].',lang='.$r['lang'],lang('del'),'btdel');
+		$lgb=$r['lang']=='fr'?'en':'fr';
+		$ret.=aj('popup,,x|admin_help|lang='.$lgb,pico('road'),'btn').br();
 		$ret.=goodinput($rid,$r['txt']);
 		return $ret;
 	}

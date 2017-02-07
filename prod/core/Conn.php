@@ -1,14 +1,14 @@
 <?php
 
 class Conn{
-	static $one=0;
+static $one=0;
 
-	static function mklist($d,$o=''){
+static function mklist($d,$o=''){
 	$r=explode("\n",$d); $b=$o?'ol':'ul';
 	foreach($r as $v)if(substr($v,0,1)=='<')$ret[]=$v; else $ret[]=tag('li','',$v);
 	return tag($b,'',implode('',$ret));}
 	
-	static function mktable($p,$o=''){
+static function mktable($p,$o=''){
 	if(strpos($p,'¬')===false && strpos($p,'|') && strpos($p,"\n"))$p=str_replace("\n",'¬',$p);
 	$p=str_replace(array('|¬',"¬\n",' ¬'),'¬',$p);
 	if(substr(trim($p),-1)=='¬')$p=substr(trim($p),0,-1);
@@ -16,14 +16,24 @@ class Conn{
 	foreach($tr as $k=>$row)$ret[]=explode('|',$row);
 	return Build::table($ret,'','');}
 	
-	static function url($u,$t='',$c='',$o=''){$t=$t?$t:domain($u);
+static function url($u,$t='',$c='',$o=''){$t=$t?$t:domain($u);
 	if(substr($u,0,4)=='http'){$t=pic('external-link',12).$t; $o=1;}
 	return href($u,$t,$c,$o);}
+
+static function noconn($d,$b){
+	list($p,$o,$c)=readconn($d); $atb=array('class'=>$o);
+	$r=['a','b','i','u','h1','h2','h3','h4','sup','sub','span','div','small','big','url'];
+	if(in_array($c,$r))return $p;
+	switch($c){
+		case('img'):return substr($p,0,4)=='http'?$p:host().'/img/full/'.$p; break;
+		case('web'):return Sql::read('tit','telex_web','v','where url="'.$p.'"'); break;
+		case('art'):return article::tit(['id'=>$p]); break;}	
+	if($c && method_exists($c,'tit'))return $c::tit(['id'=>$p]);}
 	
-	static function reader($d,$b){
+static function reader($d,$b){
 	list($p,$o,$c)=readconn($d); $atb=array('class'=>$o);//echo $p.'*'.$o.':'.$c.br();
-	$b='b,i,u,h1,h2,h3,h4,sup,sub,span,div,small,big';
-	if(strpos($b,$c.',')!==false)return tag($c,$atb,$p);
+	$r=['b','i','u','h1','h2','h3','h4','sup','sub','span','div','small','big'];//,'code'
+	if(in_array($c,$r))return tag($c,$atb,$p.($o?'*'.$o:''));
 	switch($c){
 		case('br'):return br(); break;
 		case('h'):return tag('h3',$atb,$p); break;
@@ -41,6 +51,8 @@ class Conn{
 		case('list'):return self::mklist($p); break;
 		case('numlist'):return self::mklist($p,1); break;
 		case('table'):return self::mktable($p,$o); break;
+		case('css'):return span($p,$o); break;
+		case('code'):return tag('pre','',tag('code','',$p.($o?'*'.$o:''))); break;
 		case('art'):return href('/art/'.$p,article::tit(['id'=>$p]),'btlk'); break;
 		//case('form'):return Form::com($p); break;
 		case('apj'):$js='ajaxCall("div,cn'.$c.',,1|'.$p.','.$o.'","headers=1");';
@@ -53,12 +65,12 @@ class Conn{
 	}
 	if(is_img($d))return img($d,'','',$o);
 	if($d=='http')return self::url($d,'','btxt');
-	if($c){//app as connector
+	if($c && method_exists($c,'content')){//app as connector
 		if($o==1)return aj('popup|'.$c.','.$o.'|param='.$p,langp('open').' '.$c.':'.$p,'btn');
 		else return App::open($c,['appMethod'=>$o,'param'=>$p,'headers'=>1]);}
-	return $d;}//'['..']'
+	return '['.$d.']';}
 	
-	static function read($d,$app,$mth,$p=''){
+static function read($d,$app,$mth,$p=''){
 	$st='['; $nd=']'; $deb=''; $mid=''; $end='';
 	$in=strpos($d,$st);
 	if($in!==false){
@@ -85,15 +97,16 @@ class Conn{
 		return $ret;}
 	return $deb.$mid.$end;}
 	
-	static function load($p){
+static function load($p){
 	$d=val($p,'msg',val($p,'params')); $opt=val($p,'opt'); $ptag=val($p,'ptag'); 
 	$app=val($p,'app','Conn'); $mth=val($p,'mth','reader'); self::$one=0;
 	$ret=self::read($d,$app,$mth,$opt);
-	if($ptag)$ret=nl2br(ptag($ret));
-	//else $ret=mb_ereg_replace("[\n]{2,}",br(),$ret);
+	if($ptag){$ret=ptag($ret);
+		$ret=mb_ereg_replace("[\n]{2,}","\n",$ret);
+		$ret=nl2br($ret);}
 	else $ret=nl2br($ret);
 	return $ret;}
 	
-	static function call($p,$o=''){return self::load(['msg'=>$p,'ptag'=>$o]);}
+static function call($p,$o=''){return self::load(['msg'=>$p,'ptag'=>$o]);}
 }
 ?>

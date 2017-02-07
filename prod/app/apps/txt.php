@@ -20,11 +20,10 @@ class txt{
 	
 	#content
 	static function content($prm){$w=val($prm,'pagewidth');
-		if($w)$s='min-width:'.($w-40).'px; '; else $s='';
 		$ret=hlpbt('txt_app').' ';
-		$ret.=tag('a','id=ckb,class=btdel,onclick=memStorage(\'txarea_m1_res\');',lang('restore')).' ';
+		//$ret.=tag('a','id=ckb,class=btdel,onclick=memStorage(\'txarea_m1_res\');',lang('restore')).' ';
 		$ret.=tag('a','id=ckc,class=btsav,onclick=memStorage(\'txarea_m1_sav\');',lang('save'));
-		$inp=tag('textarea',array('id'=>'txarea','style'=>'min-width:540px; min-height:140px;'),'');
+		$inp=tag('textarea',array('id'=>'txarea','style'=>'min-width:310px; min-height:140px;'),'');
 		$ret.=div($inp);
 		$ret.=Head::jsCode(self::injectJs());
 		return $ret;

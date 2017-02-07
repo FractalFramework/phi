@@ -16,7 +16,7 @@ class contact{
 	$r=[ses('uid'),$cto,$mail,$tit,$txt];
 	if($txt)$nid=Sql::insert(self::$db,$r);
 	if($cto)$to=Sql::read('mail','login','v','where id='.$cto);
-	if($nid && $mail && $to)Mail::send($to,$tit,$txt,$mail);
+	if($nid && $mail && $to)Mail::send($to,$tit,$txt,$mail,'html');
 	if($nid && $mail)return help('message posted','valid');
 	else return help('message not posted','alert');}
 
@@ -44,7 +44,7 @@ static function read($p){$rid=val($p,'rid');
 	
 	//interface
 	static function content($p){
-	self::install();
+	//self::install();
 	$rid=randid('md');
 	$ret=tag('h1','',lang('contact'));
 	if(auth(6))$ret.=aj($rid.'|contact,read|rid='.$rid,langp('view'),'btn').br();

@@ -14,7 +14,7 @@ class _model{
 	#header to display with the App
 	//add param headers=1 when call by ajax a method who use css
 	static function headers(){
-		Head::add('csscode','.board{
+		Head::add('csscode','.deco{
 		color:#424242; background-color:#dbdbdb; border:1px solid #aaa;
 		padding:7px 10px; border-radius:2px; box-shadow: 2px 2px 4px #aaa;
 		}');
@@ -60,8 +60,8 @@ class _model{
 		$p['p1']=val($p,'param',val($p,'p1'));//unamed param
 		//$ret=hlpbt('underbuilding');
 		$ret=input('inp1','value1','','1');
-		$ret.=aj('popup|_model,call|msg=text|inp1',lang('send'),'btn');
-		$ret=div($ret,'board');
+		$ret.=ajax('popup','_model,call','msg=text','inp1',lang('send'),'btn');
+		$ret=tag('div',array('class'=>'deco'),$ret);
 	return $ret;}
 }
 ?>

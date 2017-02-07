@@ -2,24 +2,10 @@
 
 class Vue{
 
-static function template(){
-	return '
-	[
-		[_var1*class=btn:div]
-		[_var2*div:tag]
-		[_var3*_url:a]
-	*:div]
-	';}
-
-static function test(){
-	$datas=['var1'=>'hello1','var2'=>'hello2','var3'=>'hello3','url'=>'http://ph1.fr'];
-	$template=Vue::template();
-	return Vue::read($datas,$template);}
-
 static function reader($d,$b){
-	list($p,$o,$c)=readconn($d); $atb=atbr($o);
+	list($p,$o,$c)=readconn($d);
 	$b='div,span,h1,h2,h3,h4,small,big,';
-	if(strpos($b,$c.',')!==false)return tag($c,$atb,$p);//txt*class=btn,:tag
+	if(strpos($b,$c.',')!==false)return tagb($c,$o,$p);//txt*class=btn,:tag
 	switch($c){
 		case('br'):return br(); break;
 		case('a'):return href($o,$p); break;//url*href=http://ph1.fr:a
@@ -37,14 +23,14 @@ static function reader($d,$b){
 		case('no'):return '['.$p.']'; break;}
 	return '['.$d.']';}
 	
-static function read($p,$tmp){
+static function read($r,$tmp){$tmp=deln($tmp);
+	if($r)foreach($r as $k=>$v)$tmp=str_replace('_'.$k.'',$v,$tmp);
 	$ret=Conn::read($tmp,'Vue','reader');
-	foreach($p as $k=>$v)$ret=str_replace('_'.$k.'',$v,$ret);
 	return $ret;}
 
-static function read_r($r,$tmp){$ret='';
-	foreach($r as $k=>$v)$ret.=self::read($v,$tmp);
-	return $ret;}
+static function read_r($r,$tmp){
+	if($r)foreach($r as $k=>$v)$ret[]=self::read($v,$tmp);
+	if(isset($ret))return implode('',$ret);}
 	
 }
 

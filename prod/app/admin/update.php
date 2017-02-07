@@ -9,7 +9,7 @@ class update{
 		foreach($r as $k=>$v)if(is_array($v))$ret[]=self::echo_r($v,$o); else $ret[]=$v;
 	return implode($o,$ret);}
 	
-	static function dirs(){$r=['prod','index.php','call.php','amt.php','api.php','cfng/_connect.php','cfng/_twitter_oAuth.php','htaccess.txt','favicon.ico','readme.txt','releases.txt'];//,'icon'
+	static function dirs(){$r=['prod','index.php','call.php','amt.php','api.php','cfng/site.com.php','cfng/_twitter_oAuth.php','htaccess.txt','favicon.ico','readme.txt','releases.txt'];//,'icon'
 	return $r;}
 	
 	static function mk_r($d){

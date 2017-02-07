@@ -37,7 +37,7 @@ static function mkconn($f){
 static function bt($f){
 	$p=self::provider($f); $id=self::extractid($f,$p);
 	if($p && $id)return Ajax::j('popup|Video,call|p='.$p.',id='.$id,picto('video').' '.$p,'btn');
-	else return href($f,domain($f)."&nbsp;".picto('get'),'btxt','',1);}
+	else return href($f,domain($f)."&nbsp;".picto('get'),'btxt',1);}
 
 static function play($f){
 	$p=self::provider($f);

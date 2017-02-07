@@ -41,9 +41,6 @@ function tag($tag,$r,$t='',$o=''){$ret='';
 	if(is_string($r))$r=atr($r);
 	if(is_array($r))foreach($r as $k=>$v)if($v!=='')$ret.=atb($k,$v);
 	return '<'.$tag.$ret.(!$o?'>'.$t.'</'.$tag.'>':'/>');}
-	
-function tagb($tag,$p,$t='',$o=''){//using atb
-	return '<'.$tag.$p.(!$o?'>'.$t.'</'.$tag.'>':'/>');}
 
 function div($t,$c='',$id='',$s='',$rb=''){
 	$r=array('id'=>$id,'class'=>$c,'style'=>$s); if($rb)$r+=$rb;
@@ -55,8 +52,8 @@ function li($t,$c='',$id='',$s=''){
 	$r=array('id'=>$id,'class'=>$c,'style'=>$s);
 	return tag('li',$r,$t);}
 
-function href($u,$t='',$c='',$id='',$bk=''){if(!$t)$t=domain($u);
-	$r=array('href'=>$u,'id'=>$id,'class'=>$c); if($bk)$r['target']='_blank';
+function href($u,$t='',$c='',$o='',$id=''){if(!$t)$t=domain($u);
+	$r=array('href'=>$u,'id'=>$id,'class'=>$c); if($o)$r['target']='_blank';
 	return tag('a',$r,$t);}
 function btj($t,$j='',$c='',$id=''){
 	return tag('a',array('id'=>$id,'class'=>$c,'onclick'=>$j),$t);}
@@ -74,8 +71,8 @@ function goodinput($id,$v){
 function hidden($id,$v){
 	$r=array('type'=>'hidden','id'=>$id,'value'=>$v);
 	return tag('input',$r,'',1);}
-function password($id,$v,$s='',$h=''){$type=$h?'placeholder':'value';
-	$r=array('type'=>'password','id'=>$id,$type=>$v,'size'=>$s);
+function password($id,$v,$sz='',$h=''){$type=$h?'placeholder':'value';
+	$r=array('type'=>'password','id'=>$id,$type=>$v,'size'=>$sz);
 	return tag('input',$r,'',1);}
 function textarea($id,$v,$cols,$rows,$h='',$c=''){
 	$r=array('id'=>$id,'cols'=>$cols,'rows'=>$rows,'class'=>$c); if($h)$r['placeholder']=$h;
@@ -162,7 +159,7 @@ function picto($d,$s='',$c=''){if($c)$c=' '.$c; if(is_numeric($s))$s='font-size:
 //helps
 function help($d,$c='',$b=''){return Help::get(['ref'=>$d,'css'=>$c,'conn'=>$b]);}
 function hlpbt($d,$t=''){return bubble('Help,com|ref='.$d,$t?$t:pic('info'),'help');}
-function hlpxt($d,$c=''){return Help::read($d);}
+function hlpxt($d){return Help::get(['ref'=>$d,'brut'=>1]);}
 
 //strings
 function delbr($d,$o=''){return str_replace(array('<br />','<br/>','<br>'),$o,$d);}
@@ -176,16 +173,6 @@ function normalize($d){
 	$d=str_replace(array(' ',"'",'"','?','/','§',',',';',':','!','%','&','$','#','_','+','=','!',"\n","\r","\0","[\]",'~','(',')','[',']','{','}','«','»',"&nbsp;",'-','.'),'',($d));
 	return stripAccents($d);}
 
-function unescape($d){$n=strlen($d); $ret='';
-	if(strpos($d,'%u')===false)return $d;
-	for($i=0;$i<$n;$i++){$c=substr($d,$i,1);
-	if($c=='%'){$i++; $cb=substr($d,$i,1);
-		if($cb=='u'){$i++; $cc=substr($d,$i,4); $i+=3; $ret.='&#'.hexdec($cc).';';}
-		else $ret.=$c.$cb;}
-	else $ret.=substr($d,$i,1);}
-	return $ret;}
-
-function del_n($d){return str_replace("\n",'',$d);}
 function del_p($d){$d=str_replace(array('<p>','</p>'),"\n",$d);
 	return str_replace('<br>',"\n",$d);}
 function clean_firstspace($d){$r=explode("\n",$d);
@@ -198,7 +185,8 @@ function clean_n($ret){
 
 function ptag($d){$r=explode("\n\n",$d);
 	if($r)foreach($r as $k=>$v)if(trim($v) && $v!="\n")$rb[$k]='<p>'.trim($v).'</p>';
-	if(isset($rb))return implode('',$rb);}
+	if(isset($rb))return implode('',$rb); //return str_replace('</p>'."\n",'</p>',$ret);
+}
 
 //php
 function combine($a,$b){$n=count($a); $r=array();
@@ -223,6 +211,9 @@ function arrayToString($r,$line,$col){
 	return implode($line,$ret);}
 function stringToArray($d,$line,$col){$r=explode($line,$d);
 	if($r)foreach($r as $k=>$v)$ret[]=explode($col,$v);
+	return $ret;}
+function stringToAssocArray($d,$line,$col){$r=explode($line,$d);
+	if($r)foreach($r as $k=>$v){list($ka,$va)=explode($col,$v); $ret[$ka]=$va;}
 	return $ret;}
 function in_array_k($r,$d){foreach($r as $k=>$v)if($v==$d)return $k;}
 function maxk($r){$d=max($r); return in_array_k($r,$d);}
@@ -265,8 +256,7 @@ function val($r,$d,$b=''){if(!isset($r[$d]))return $b;
 	return $r[$d]=='memtmp'?memtmp():$r[$d];}
 function vals($r,$rb){foreach($rb as $k=>$v)$ret[$v]=isset($r[$v])?$r[$v]:''; return $ret;}
 function prm($p){foreach($p as $k=>$v)$ret[]=$k.'='.$v; if($ret)return implode(',',$ret);}
-/*function prmb($p,$v){$r=explode(',',$v); foreach($r as $v)$ret[]=$v.'='.val($p,$v);
-	if($ret)return implode(',',$ret);}*/
+function mkprm($p){foreach($p as $k=>$v)$ret[]=$k.'='.$v; if($ret)return implode('&',$ret);}
 function get($d){if(isset($_GET[$d]))return urldecode($_GET[$d]);}
 function post($d){if(isset($_POST[$d]))return $_POST[$d];}
 function cookie($name,$value=''){
@@ -288,9 +278,15 @@ function onoff($d){return ses($d)?sez($d,0):ses($d,1);}
 function readconn($d){$p=strrpos($d,':');//p*o:connector
 if($p!==false)$r=array(substr($d,0,$p),substr($d,$p+1)); else $r=array($d,'');
 $p=explode('*',$r[0]); return array($p[0],isset($p[1])?$p[1]:'',$r[1]);}
-function atbr($d){if(strpos($d,'=')===false)return $d; $r=explode(',',$d); $ret=''; 
-	if($r)foreach($r as $v){list($k,$v)=explode('=',$v); $ret[$k]=$v;} return $ret;}
-function insertbt($t,$v,$id){return $ret=btj($t,'insert(\'['.$v.']\',\''.$id.'\')','btsav');}
+
+function atbr($d){$ret=''; $r=explode(',',$d);//make k="v" from k=v,
+	if($r)foreach($r as $v)if(strpos($v,'=')){
+		list($ka,$va)=explode('=',$v); $ret.=atb($ka,$va);}
+	return $ret;}
+function tagb($tag,$p,$t=''){//for Vue
+	if(trim($t))return '<'.$tag.atbr($p).'>'.$t.'</'.$tag.'>';}
+
+function insertbt($t,$v,$id){return $ret=btj($t,'insert(\'['.$v.']\',\''.$id.'\')','btok');}
 
 //amt
 function memtmp(){
@@ -340,10 +336,11 @@ return $ret;}
 //utils
 function host(){return 'http://'.$_SERVER['HTTP_HOST'];}
 function encode($d){return ses('enc')==1?utf8_encode($d):$d;}
+function decode($d){return ses('enc')==1?utf8_decode($d):$d;}
 function ip(){return gethostbyaddr($_SERVER['REMOTE_ADDR']);}
-function chrono($name){$ret=''; static $start;
+function chrono($name=''){$ret=''; static $start;
 	if($start)$ret=round(array_sum(explode(' ',microtime()))-$start,3);
 	$start=array_sum(explode(' ',microtime()));
-	return tag('small','',$ret);}
+	return tag('small','',$name.':'.$ret);}
 
 ?>

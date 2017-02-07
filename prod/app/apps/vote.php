@@ -233,8 +233,9 @@ class vote{
 	#polls
 	static function poll($p){
 		$idPoll=val($p,'idPoll'); $rid=val($p,'rid');
+		if(!$idPoll)return;
 		$cols='name,txt,vote_lead.up as date';
-		$where='where vote_lead.id='.$idPoll.' and closed!=1';
+		$where='where vote_lead.id='.$idPoll.' and closed=0';
 		$r=Sql::read_inner($cols,'vote_lead','login','uid','ra',$where);
 		if(!$r)return lang('not exists');
 		//admin
@@ -269,28 +270,31 @@ class vote{
 	
 	#tlx
 	static function call($p){$p['idPoll']=val($p,'id');
-		return div(self::poll($p),'','pllscnt'.$p['idPoll']);}
-	static function com($p){
-		return self::content($p);}
+		if($p['idPoll'])return div(self::poll($p),'','pllscnt'.$p['idPoll']);}
+		
+	static function com($p){$rid=val($p,'rid');
+		$id=val($p,'id'); $edt=val($p,'edt'); $mnu=val($p,'mnu');
+		//if($id)$ret.=self::build($p);
+		//elseif($mnu)$ret.=self::menu($p);
+		return self::content($p);
+		}
 	
 	#content
-	static function content($p){$ret='';
+	static function content($p){$ret=''; $idPoll=val($p,'idPoll');
 		//self::install(1);
-		//Lang::$app='vote';//context for new voc
-		if(isset($p['param']))$p['idPoll']=$p['param'];
-		$logbt=ses('user')?ses('user'):'login';
-		$ret.=span(Auth::logbt(),'right');
+		//$logbt=ses('user')?ses('user'):'login';
+		//$ret.=span(Auth::logbt(),'right');
 		//$ret=div(App::open('login'),'right');
-		$ret.=aj('pllscnt'.$p['idPoll'].'|vote,polls',pic('list'),'btn').' ';
+		$ret.=aj('pllscnt'.$idPoll.'|vote,polls|rid='.val($p,'rid'),pic('list'),'btn').' ';
 		$bt=pic('plus').' '.langs('new,referendum');
-		if(ses('uid'))$ret.=aj('popup|vote,add|idPoll='.$p['idPoll'],$bt,'btn').' ';
+		if(ses('uid'))$ret.=aj('popup|vote,add|idPoll='.$idPoll,$bt,'btn').' ';
 		$ret.=hlpbt('vote_app').' ';
 		$ret.=br().br();
 		//root
 		if(isset($p['idArg']))$res=self::argumentPane($p);
-		elseif(isset($p['idPoll']))$res=self::poll($p);
+		elseif(isset($idPoll))$res=self::poll($p);
 		else $res=self::polls($p);
-		$ret.=div($res,'','pllscnt'.$p['idPoll']);
+		$ret.=div($res,'','pllscnt'.$idPoll);
 		return $ret;}
 }
 

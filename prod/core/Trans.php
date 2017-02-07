@@ -60,7 +60,7 @@ class Trans{
 	static function call($p){
 	$txt=val($p,'txt');
 	//$txt=unicode($txt);
-	if(!val($p,'brut'))$txt=del_n($txt);
+	if(!val($p,'brut'))$txt=deln($txt);
 	$txt=del_p($txt);
 	$txt=clean_firstspace($txt);
 	$txt=clean_n($txt);
