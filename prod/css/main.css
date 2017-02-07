@@ -1,0 +1,137 @@
+/*FractalFramework.com*/
+
+body{
+	background:#f5f5f5;
+}
+
+section{
+	background:white;
+	margin:20px 0;
+}
+
+blockquote{
+	border-left:8px solid #eee;
+	background:white;
+}
+
+/*textarea full page*/
+#txarea{
+	background-color:#FFFFFF; 
+	font-size:large; 
+	border:1px dotted grey; 
+	padding:8px 12px; 
+	width:100%; 
+	height:calc(100vh - 100px); 
+	overflow-y:auto;
+}
+.txarea{
+	font-family:Lucida Console, Courier New;
+	background-color:#2F2F2F; 
+	border-left:4px solid #000; 
+	word-wrap:break-word; 
+	color:#fff; 
+	border:0; 
+	padding:10px; 
+	width:100%; 
+	height:calc(100vh - 100px);
+}
+
+/*additions*/
+.btn, .btsav, .btdel{
+	font-family: Arial;
+	/*background-image:linear-gradient(#f5f8fa,#f5f8fa);*/
+    color: black;
+    border-color:#dfdfdf;
+    cursor: pointer;
+}
+.btn:hover, a:hover .btn{
+	background-color:white;
+	background-image:linear-gradient(#f5f8fa,#fff);
+	color: black;
+}
+.btn.active{
+	background-image:linear-gradient(#fff,#fff);
+	box-shadow:0 0 2px #ddd;
+    border-color:#dfdfdf;
+}
+
+.btsav{background-image:linear-gradient(#f5f8fa,#f5f8fa); border-color:#0088e6;}
+.btsav:hover{background-color:#0088e6;}
+.active .btsav:hover{color:#fff;}
+.btdel{background-image:linear-gradient(#f5f8fa,#f5f8fa); border-color:#a82020;}
+.btdel:hover{background-color:#c82020;}
+.btsav:hover{text-shadow:0px 0px 0px #fff;}
+.btdel:hover{text-shadow:0px 0px 0px #fff;}
+
+/*.btok:hover{color:#ffffff; background-image:linear-gradient(#22dd22,#44bb44); text-shadow:0px 0px 0px #fff;}*/
+
+/*popup*/
+.popup{}
+
+.bubble{}
+
+.popa{}
+
+.popu{}
+
+.bubu{}
+
+.bubu a{}
+
+/*@keyframes pagup{
+	from {background-color:black;}
+	to {background-color:background:rgba(0,0,0,0.5);}
+}
+
+.pagup{
+	background-color:background:rgba(0,0,0,0.5);
+	animation-name:pagup;
+	animation-duration:1s;
+}*/
+
+#page{
+	margin:0;
+	padding:40px 20px 20px 20px;
+}
+
+#content{
+	background:#f5f5f5;
+	padding:20px;
+}
+
+/*page-elements*/
+
+.track{
+	border:1px solid silver;
+	padding:10px;
+	border-radius:4px;
+}
+
+/*share*/
+.pic.twitter{
+	padding:0 10px;
+	color:#1da1f2;
+}
+.pic.facebook{
+	padding:0 10px;
+	color:#3b5998;
+}
+.pic.stumble{
+	padding:0 10px;
+	color:#ab4924;
+}
+.pic.gplus{
+	padding:0 10px;
+	color:#c03c30;
+}		
+
+/*dev*/
+#dev{
+	font-size:small;
+	position: fixed;
+	min-width: 40px;
+	top: 0;
+	right: 0;
+	z-index: 2;
+	background: #e5e5e5;
+}
