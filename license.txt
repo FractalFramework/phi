@@ -1,0 +1,3 @@
+@fractalFrameWork 2015-2017
+License GNU/GPL v3+
+http://tlex.fr

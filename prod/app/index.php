@@ -1,12 +1,7 @@
 <?php
-
 class index{
-	
-	#content
-	static function content($prm){
-		return Desk::load('desktop','com',val($prm,'dir'));
-	}
-	
+#content
+static function content($p){
+	return div(desk::load('desktop','com',val($p,'dir')),'','wrapper');}	
 }
-
 ?>

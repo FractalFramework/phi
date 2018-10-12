@@ -31,13 +31,9 @@ $RECYCLE.BIN/
 # Thumbnails
 ._*
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
+# Files that might appear on external disk
 .Spotlight-V100
-.TemporaryItems
 .Trashes
-.VolumeIcon.icns
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -54,7 +50,12 @@ cnfg/ph1.fr.php
 cnfg/tlex.fr.php
 cnfg/telx.fr.php
 cnfg/yandex.txt
-app/tlex
+_trash.php
 fonts/_old
 img
-app/tlex
+nodejs
+fonts/fa50
+fonts/fa51
+fonts/ttf
+fonts/fa4
+usr

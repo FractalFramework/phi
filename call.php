@@ -1,27 +1,26 @@
 <?php
-#ph1.fr license GNU/GPL
+#Fractal license GNU/GPL
 session_start();
 require('boot.php');
 $app=get('appName');
 $mth=get('appMethod');
-$p=_jrb(get('params'),1);
+$p=_jrb(get('params'));
 $p['appName']=$app;
 $p['appMethod']=$mth;
 if(isset($p['verbose']))pr($p);
 #request
-$content=App::open($app,$p);
-//titles
-if(!isset($p['title']))
-	if(method_exists($app,'titles'))
-		$p['title']=$app::titles($p);
+$content=app($app,$p);
+//$a=new $app; $content=$a->$mth($p);
 #render
-$ret=Head::build();
-if(get('popup'))$ret.=Build::popup($content,$p);
-elseif(get('pagup'))$ret.=Build::pagup($content);
-elseif(get('imgup'))$ret.=Build::imgup($content);
-elseif(get('bubble'))$ret.=Build::bubble($content);
-elseif(get('menu'))$ret.=Build::menu($content);
+$ret=build_head();
+if(get('popup'))$ret.=build::popup($content,$p);
+elseif(get('pagup'))$ret.=build::pagup($content,$p);
+elseif(get('imgup'))$ret.=build::imgup($content);
+elseif(get('bubble'))$ret.=build::bubble($content);
+elseif(get('menu'))$ret.=build::menu($content);
+elseif(get('drop'))$ret.=build::menu($content);
 elseif(get('ses'))sez($p['k'],$p['v']);
 else $ret.=$content;
-echo encode($ret);
+echo $ret;
+sqlclose();
 ?>

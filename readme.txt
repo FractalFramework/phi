@@ -1,32 +1,34 @@
-@fractalFrameWork 2015-2017
+@fractalFrameWork 2015-2018
 Free License GNU/GPL
 ====================
 
-Thank you to download and use TELEX !
-Telex is a Twitter-Like open source
-It works under this fractalFrameWork environment
+Thank you to download and (try to) use FRACTALFRAMEWORK !
 
 ====================
 
-**AJAX MVC FRAMEWORK**
+AJAX MVC FRAMEWORK
 
 This is a platform to build web applications.
 The architecture is based on the the Ajax process.
 
+Tlex is an App of FF : it's a Twitter-Like abble to share Apps
+Lots of Apps are distribued. They are written to let other Apps use their processes.
+
 REQUIREMENTS
 ----------
-Server Apache PHP MYSQL and mailing ability
+Server Apache PHP>=5.4 MYSQL >5 and mailing abilities
 
 INSTALLATION
 -------------
 - copy files on your server
-- chmod -R 777 /var/www (to ALL)
+- chmod -R 777 /var/www/[your dir] (to ALL)
 - set the config : rename /cnfg/site.com.php to [your domaine].php and fill the variables.
-- if you have it, you can set /cnfg/twitter_oAuth.php (delete the "_" before)
 - rename htaccess.txt -> .htaccess
-- /app/install will create all needed mysql tables (!! temporaly change var private=6 -> private=0 to access while you are not again registered !!)
-- /app/apisql will import some needed datas (lang, help, icons, desktop)
-- create first account, it will have the column 'auth' of mysql table 'login' set to 6 (as superadmin). Others accounts will have auth=2.
+- /install will create all needed mysql tables (!! temporaly change var private=6 -> private=0 to access it while you are not again registered !!)
+- /apisql will import all needed datas (lang, help, icons, desktop)
+- /update will import most recents files from server.
+- create first account, it will have the column 'auth' of mysql table 'login' set to 7 (as superadmin). Others accounts will have auth=2.
+- set yoursite.com.php file in /cnfg
 
 STRUCTURE
 ----------
@@ -37,14 +39,18 @@ STRUCTURE
 DEV MODE
 --------
 /?dev== will switch to dev mode, a new dropmenu apperar
-you can dev offline, using files of /prog, and push them to /prod
+you can dev online, using files of /prog, and push them to /prod
 
-HOW IT'S WORKS
+HOW THE FRAMEWORK WORKS
 ---------------
-Load Apps in chains from any other App.
-The application collect the specifics headers of the App.
-The Ajax process let you call your Apps in a new html page, or by ajax inside a div, a popup, a bubble, a pagup, or as a menu.
+/Core contain usable module for Apps.
+/App contain unitaries Apps that contain PHP, CSS and JavaScript.
 
+We can load Apps in chains from any other App.
+The application collect the specifics headers and JS of the App.
+The Ajax process let you call your Apps in a new page, or by ajax inside a div, a popup, a bubble, a pagup, or as a menu.
+
+Ajax do that :
 /app/appName 
 	-> open popup 
 		-> use javascript (ajax.js)
@@ -57,34 +63,49 @@ The Ajax process let you call your Apps in a new html page, or by ajax inside a 
 IN PHP
 -------
 To load an App :
-	$prm=array('key1'=>'val1');//params of App
-	$content=App::open('myApp',$prm);
+	$p=array('key_1'=>'val_1');//params of App
+	$content=App::open('myApp',$p);
+
+You can target another than 'content' like this : 
+	$content=App::open('myApp',['appMethod'=>'call','key_1'=>'val_1']);
 
 BASIC STRUCTURE OF AN APP
 --------------------------
-Callable components are recognizable because of their alone "$prm".
+Callable components are recognizable because of their alone "$p" (Array of Params).
 They mean this function can be interfaced.
-$prm contain these variables :
+$p contain these variables :
 - [appName], [appMethod] //params of com
-- [key1], [...] //params sent to the App
+- [key1], [...] //params sent to the App, directly or from some fields
 - [pagewidth] //from javascript
 
 //basic App
-class App{
+class App{//extends appx
 	public static $private='0';//public access
 	public static function injectJs(){return self::js();}//loadable js
 	public static function headers(){Head::add('jscode',self::injectJs());}//css and js
 	public static function admin(){return $r[]=array('','lk','/','home','');}//add to admin
-	public static function build(){}//process
-	public static function call(){}//called from process
-	public static function content($prm){}//called by default
+	public static function build($p){}//process
+	public static function call($p){}//called from process
+	public static function content($p){}//called by default
 }
+
+APPX
+------
+Appx is an abstract App who let usable a lot of process common to each App :
+- create an database and a secondary level of database
+- create and manage the items
+- build complex forms
+- use standard names of columns of database associated with specific actions
+- presentation of the items
+- privileges for each items
+- collect datas of public forms
+You can intercept any step of the process by your own function, specially the process 'play' and 'template'.
 
 ON USE
 ------
-Create your application as an Object in the folder /app.
+Create your application as an Object in the folder /prog.
 
-//in /app/myApp.php 
+//url: /myApp 
 class myApp{
 	
 	//used to append this in the headers of the parent page who call this in ajax
@@ -98,23 +119,20 @@ class myApp{
 	}
 	
 	//default method loaded by the App
-	public static function content($prm){
-		//$prm incoming associative array of parameters, include from inputs
-		$text=val($prm,'text');//verif if isset()
+	public static function content($p){
+		//$p incoming associative array of parameters, also from inputs
+		$text=val($p,'text');//verif if isset()
 		
 		//ajax button
-		$params=array(
-			'com'=>'popup',
-			'app'=>'tests,result',
-			'prm'=>'message='.$text; //',verbose=1,no-headers=1'
-			'prm'=>array('message'=>$text); //alternative
-			'inp'=>'inp1');
-		return Ajax::call($params,lang('send'),'btn');//lang() word in good language
-		
-		//fast method (command in one line)
+		//4 params for the command : com (where), app (call), prm (['a'=>1,'b'=>2]), inp (inputs)
 		return aj('popup|tests,result|message='.$text.'|inp1',lang('send'),'btn');
 	}
 }
+
+DEV
+----
+To dev enter in dev mode, that's edit the files in folder /prog.
+When you push, that push the files in folder /prod, visible to the public.
 
 URL
 ----
@@ -130,6 +148,17 @@ Constantly keep the lib.php on eyes to help you to write code.
 //make tag div with class deco:
 $ret=tag('div',array('class'=>'deco'),'hello');
 
+CONNECTORS
+---------------
+//make tag div with class deco:
+$ret='[hello*class=deco:div]');
+
+GENETICS
+---------
+Genetics is a motor of template based on the Connectors.
+It let build sophisticated templates with ability to supplant vars from the builder to make tests.
+Html page can be built with few lines, and let you call some Apps.
+
 SQL CLASS
 ---------
 A very useful class for Sql make it easy to create and update formated tables.
@@ -138,13 +167,13 @@ The creator will create tables at the init of the App.
 A indicator will specify the format of your datas:
 
 //give a string (v)
-$data=Sql::read('id','login','v','where id=1'); //$data;
+$v=Sql::read('id','login','v','where id=1'); //$data;
 
 //give a simple associative array (a)
-$data=Sql::read('id,user','login','a','where id=1'); //$data['id'];
+$r=Sql::read('id,user','login','a','where id=1'); //$data['id'];
 
 //give all rows and columns ('')
-$data=Sql::read('id,user','login','',''); //$data[0][0];
+$r=Sql::read('id,user','login','',''); //$data[0][0];
 
 AJAX MENUS
 -----------
@@ -172,9 +201,10 @@ public static function content(){
 
 SAMPLES
 ------
-See more examples in /app/pub
-Decline new Aps from /app/model.php
+See more examples in /pub
+Decline new Apps from /model.php
+See details in /_model.php
 
 ================
-Credits FractalFramework 2017
-http://tlex.fr
+Credits FractalFramework 2018
+http://socialnetwork.ovh/
